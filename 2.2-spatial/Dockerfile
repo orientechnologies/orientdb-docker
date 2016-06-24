@@ -2,7 +2,7 @@
 # Dockerfile  for OrientDB with spatial module
 ############################################################
 
-FROM orientdb:2.2.0
+FROM orientdb:2.2.3
 
 ENV ORIENTDB_DOWNLOAD_SPATIAL_MD5 6c2209f137a6363e60c88fd0412c35ac
 ENV ORIENTDB_DOWNLOAD_SPATIAL_SHA1 ce4f8541e8994a7edaae05af96b3b36a8a1bd537
