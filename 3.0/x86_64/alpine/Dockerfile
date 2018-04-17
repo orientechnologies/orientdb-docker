@@ -11,21 +11,27 @@ MAINTAINER OrientDB LTD (info@orientdb.com)
 ARG ORIENTDB_DOWNLOAD_SERVER
 
 ENV ORIENTDB_VERSION 3.0.0
-ENV ORIENTDB_DOWNLOAD_MD5 6e60393e6739e3d60cd8068a2171b3fd
-ENV ORIENTDB_DOWNLOAD_SHA1 c4b3298466b1083a629248673552072ac13a4fb4
-
-ENV ORIENTDB_DOWNLOAD_URL ${ORIENTDB_DOWNLOAD_SERVER:-http://central.maven.org/maven2/com/orientechnologies}/orientdb-tp3/$ORIENTDB_VERSION/orientdb-tp3-$ORIENTDB_VERSION.tar.gz
+ENV ORIENTDB_DOWNLOAD_LOCATION ${ORIENTDB_DOWNLOAD_SERVER:-http://central.maven.org/maven2/com/orientechnologies}/orientdb-community/$ORIENTDB_VERSION
+ENV ORIENTDB_DOWNLOAD_NAME orientdb-community-$ORIENTDB_VERSION
+ENV ORIENTDB_DOWNLOAD_MD5 $ORIENTDB_DOWNLOAD_LOCATION/$ORIENTDB_DOWNLOAD_NAME.tar.gz.md5
+ENV ORIENTDB_DOWNLOAD_SHA1 $ORIENTDB_DOWNLOAD_LOCATION/$ORIENTDB_DOWNLOAD_NAME.tar.gz.sha1
+ENV ORIENTDB_DOWNLOAD_URL $ORIENTDB_DOWNLOAD_LOCATION/$ORIENTDB_DOWNLOAD_NAME.tar.gz
 
 RUN apk add --update tar curl \
     && rm -rf /var/cache/apk/*
 
 #download distribution tar, untar and delete databases
 RUN mkdir /orientdb && \
-  wget  $ORIENTDB_DOWNLOAD_URL \
-  && echo "$ORIENTDB_DOWNLOAD_MD5 *orientdb-tp3-$ORIENTDB_VERSION.tar.gz" | md5sum -c - \
-  && echo "$ORIENTDB_DOWNLOAD_SHA1 *orientdb-tp3-$ORIENTDB_VERSION.tar.gz" | sha1sum -c - \
-  && tar -xvzf orientdb-tp3-$ORIENTDB_VERSION.tar.gz -C /orientdb --strip-components=1 \
-  && rm orientdb-tp3-$ORIENTDB_VERSION.tar.gz \
+  wget $ORIENTDB_DOWNLOAD_URL \
+  && wget $ORIENTDB_DOWNLOAD_MD5 \
+  && wget $ORIENTDB_DOWNLOAD_SHA1 \
+  && sed -i 's/$/ '*$ORIENTDB_DOWNLOAD_NAME'.tar.gz/' $ORIENTDB_DOWNLOAD_NAME.tar.gz.md5 \
+  && cat $ORIENTDB_DOWNLOAD_NAME.tar.gz.md5 | md5sum -c - \
+  && sed -i 's/$/ '*$ORIENTDB_DOWNLOAD_NAME'.tar.gz/' $ORIENTDB_DOWNLOAD_NAME.tar.gz.sha1 \
+  && cat $ORIENTDB_DOWNLOAD_NAME.tar.gz.sha1 | sha1sum -c - \
+  && tar -xvzf orientdb-community-$ORIENTDB_VERSION.tar.gz -C /orientdb --strip-components=1 \
+  && rm $ORIENTDB_DOWNLOAD_NAME.tar.gz \
+  && rm -f $ORIENTDB_DOWNLOAD_NAME.tar.gz.* \
   && rm -rf /orientdb/databases/*
 
 
