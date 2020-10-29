@@ -2,7 +2,7 @@
 # Dockerfile to run an OrientDB (Graph) Container
 ############################################################
 
-FROM openjdk:8-jdk-slim
+FROM openjdk:11.0.8-jdk-slim
 
 MAINTAINER OrientDB LTD (info@orientdb.com)
 
